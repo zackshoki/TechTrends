@@ -1,4 +1,6 @@
 import requests
+import json
+from bs4 import BeautifulSoup
 from google import genai
 
 geminiAPIKey = ""
@@ -7,9 +9,6 @@ gemini = genai.Client(
   api_key=geminiAPIKey
 )
 
-import requests
-import json
-from bs4 import BeautifulSoup
 
 def extract_article_text(url):
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -44,7 +43,7 @@ Article title:
 Article text:
 {article_text}"""
 
-    response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+    response = gemini.models.generate_content(model="gemini-2.0-flash", contents=prompt)
     return json.loads(response.text)
 
 def create_newsletter_entry(title, url):
