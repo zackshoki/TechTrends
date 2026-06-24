@@ -10,7 +10,7 @@ gemini = genai.Client(
 )
 
 
-def extract_article_text(url):
+def extract_article_text(url): # given a url, get the article's text as a string
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers, timeout=10)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -20,7 +20,7 @@ def extract_article_text(url):
     article_text = " ".join(p.get_text() for p in paragraphs)
     return article_text[:5000]
 
-def summarize_article(article_text, title):
+def summarize_article(article_text, title): # given the text from an article, create an entry for our newsletter in the form of a string
     prompt = f"""You are writing a technology newsletter.
 Create a newsletter entry from this article.
 
@@ -46,9 +46,42 @@ Article text:
     response = gemini.models.generate_content(model="gemini-2.0-flash", contents=prompt)
     return json.loads(response.text)
 
-def create_newsletter_entry(title, url):
+def create_newsletter_entry(title, url): # given a title and url, create a string entry for a newsletter
     text = extract_article_text(url)
     return summarize_article(text, title)
+
+def assemble_newsletter(entries):  # given several newsletter entries, generate a full newsletter with title and intro
+    if not entries:
+        return "No articles available for this issue."
+
+    sections = "\n\n".join(
+        f"Headline: {e['headline']}\nSummary: {e['body']}\nLink: {e['url']}"
+        for e in entries
+    )
+
+    prompt = f"""You are formatting a technology newsletter from pre-written entries below.
+
+Rules:
+- Do not invent facts or add new information
+- Keep each entry's headline and summary content exactly as given
+- Write a short, catchy newsletter title (not generic, related to the entries)
+- Write a 2-3 sentence intro that previews what's in this issue
+- Return ONLY valid JSON, no markdown, no extra text
+
+Return this format:
+{{
+    "title": "newsletter title",
+    "intro": "2-3 sentence intro",
+    "entries": [
+        {{"headline": "...", "body": "...", "url": "..."}}
+    ]
+}}
+
+Entries:
+{sections}"""
+
+    response = gemini.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+    return json.loads(response.text)
 
 if __name__ == "__main__":
     pass
