@@ -1,7 +1,8 @@
 import requests
 from google import genai
 
+geminiAPIKey = ""
 
 gemini = genai.Client(
-  api_key=""
+  api_key=geminiAPIKey
 )
