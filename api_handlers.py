@@ -1,7 +1,12 @@
 import requests
-# CURRENTLY WORKING TO CORRECTLY HANDLE HOW MANY ARTICLES WILL PRINT OUT, HARDCODED FOR NOW
+import time         # NYTIMES limit tracking
+import os
+from dotenv import load_dotenv
 
-def Fetch_HackerNews_Top_Stories(limit=5): # are we taking in a certain amount of top stories? ex. top 10 stories
+
+
+
+def Fetch_HackerNews_Top_Stories(limit=5):
     """
         Fetches the top stories from Hacker News using the HackerNews API.
     """
@@ -48,61 +53,102 @@ if __name__ == "__main__":
         print()
 
 
-# work on how to fetch the repos given the user's request and interests, circle back to the hackernews api as well because I didn't account for this
 
 
-def Fetch_GitHub_Trending_Repos(interest="python", limit=5):
+
+
+#######################
+
+
+
+
+
+
+
+load_dotenv()
+
+def Fetch_NYT_Top_Stories(interest="technology", limit=5):
     """
-        Fetches the trending repositories from GitHub using the GitHub API.
+        Fetches the top stories from The New York Times using the NYT API.
     """
-    trending_url = f"https://api.github.com/search/repositories?q=language:{interest}&sort=stars&order=desc&per_page={limit}"
 
-    params = {
-        "q": interest,        
-        "sort": "stars",      
-        "order": "desc",      
-        "per_page": limit
-    }
+    url = "https://api.nytimes.com/svc/search/v2/articlesearch.json"
 
-    try:
-        response = requests.get(trending_url, params=params)
-        
-        if response.status_code != 200:
-            print(f"Failed to fetch GitHub repos: {response.status_code}")
-            return []
+    api_key = os.getenv("NY_TIMES_API_KEY")  # Ensure you have set your NYT API key in the environment variables
+
+    cleaned_articles = []
+    current_page = 0
+
+    while len(cleaned_articles) < limit:
+        params = {
+
+            "q" : interest,
+            "api-key" : api_key,
+            "page": current_page
+        }
+
+        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()  # Raise an error for bad responses
+
+            data = response.json()
+
+            if response.status_code != 200:
+                print(f"Failed to fetch NYTimes data: {response.status_code}")
+                break
+
+
+            raw_data = response.json()
+            articles_list = raw_data.get("response", {}).get("docs", [])
             
-        raw_data = response.json()
-        
-        repo_list = raw_data.get("items", [])
-        
-        cleaned_projects = []
-        
-        for repo in repo_list:
-            project = {
-                "title": repo.get("name"),       
-                "url": repo.get("html_url"),     
-                "source": "GitHub"            
-            }
-            cleaned_projects.append(project)
+            if not articles_list:
+                break
+                
+            for article in articles_list:
+                headline_dict = article.get("headline", {})
+                title = headline_dict.get("main", "No Title Available")
+                
+                project_article = {
+                    "title": title,
+                    "url": article.get("web_url"),
+                    "source": "New York Times"
+                }
+                cleaned_articles.append(project_article)
+                
+                if len(cleaned_articles) == limit:
+                    break
             
-        return cleaned_projects
+            current_page += 1
+            time.sleep(1)
+            
+        except requests.exceptions.RequestException as e:
+            print(f"NYTimes Network Error: {e}")
+            break
 
-    except requests.exceptions.RequestException as e:
-        print(f"GitHub Network Error: {e}")
-        return []
+    return cleaned_articles
 
- # TESTING
+
+# TESTING
+
 if __name__ == "__main__":
-    print("--- Testing w/ different interests ---")
+    print("🚀 Starting API Handler Tests...\n")
     
-    # Test 1
-    ml_repos = Fetch_GitHub_Trending_Repos(interest="machine-learning", limit=3)
-    print("\n🤖 Machine Learning Repos:")
-    for repo in ml_repos:
-        print(f"- {repo['title']}: {repo['url']}")
+    # Test 1: Let's try fetching 3 articles about 'artificial intelligence'
+    test_interest = "SpaceX IPO"
+    test_limit = 3
+    
+    print(f"📡 Testing NYTimes API with interest: '{test_interest}' (Limit: {test_limit})...")
+    
+    results = Fetch_NYT_Top_Stories(interest=test_interest, limit=test_limit)
+    
+    print(f"📊 Received {len(results)} articles back.\n")
+    
+    # Loop through our results and print them nicely to the terminal
+    for index, article in enumerate(results, 1):
+        print(f"--- Article #{index} ---")
+        print(f"Title : {article.get('title')}")
+        print(f"URL   : {article.get('url')}")
+        print(f"Source: {article.get('source')}")
+        print()
         
-    # Test 2
-    js_repos = Fetch_GitHub_Trending_Repos(interest="javascript", limit=2)
-    print("\n🌐 JavaScript Repos:")
-    for repo in js_repos:
-        print(f"- {repo['title']}: {repo['url']}")
+    print("🏁 Testing complete!")
