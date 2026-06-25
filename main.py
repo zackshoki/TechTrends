@@ -55,7 +55,6 @@ while True:
 
         newsletter = create_newsletter.assemble_newsletter(entries)
         print(newsletter["title"])
-        print(newsletter["intro"])
         print()
         for i in range(number_of_articles):
             print(str(i+1) + ". " + newsletter["entries"][i]["headline"])
@@ -63,11 +62,14 @@ while True:
             print()
         print()   
         choice2 = input("Summary? (Y/N): ")
-        if choice2 != "Y":
+        if choice2 == "N" or choice2 == "n":
             pass
-        else: 
+        elif choice2 == "Y" or choice2 == "y": 
             choice3 = input("Choose which article (Enter a number): ")
             print(newsletter["entries"][int(choice3)-1]["body"])
+        else:
+            while choice2 not in ["Y", "N", "y", "n"]:
+                choice2 = input("Invalid. Please enter Y or N: ")
        
     elif choice == "2":
         # output user interests
