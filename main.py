@@ -58,9 +58,16 @@ while True:
         print(newsletter["intro"])
         print()
         for i in range(number_of_articles):
-            print(newsletter["entries"][i]["headline"])
-            print(newsletter["entries"][i]["body"])
+            print(str(i+1) + ". " + newsletter["entries"][i]["headline"])
+            print(newsletter["entries"][i]["url"])
             print()
+        print()   
+        choice2 = input("Summary? (Y/N): ")
+        if choice2 != "Y":
+            pass
+        else: 
+            choice3 = input("Choose which article (Enter a number): ")
+            print(newsletter["entries"][int(choice3)-1]["body"])
        
     elif choice == "2":
         # output user interests

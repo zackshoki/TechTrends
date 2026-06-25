@@ -57,7 +57,7 @@ def create_newsletter_entry(title, url): # given a title and url, create a strin
     entry["url"] = url
     return entry
 
-def assemble_newsletter(entries):  # given several newsletter entries, generate a full newsletter with title and intro
+def assemble_newsletter(entries):  # given several newsletter entries, generate a title, intro, and headlines w/ links
     if not entries:
         return "No articles available for this issue."
 
