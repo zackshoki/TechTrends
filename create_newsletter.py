@@ -2,8 +2,12 @@ import requests
 import json
 from bs4 import BeautifulSoup
 from google import genai
+from dotenv import load_dotenv
+import os
 
-geminiAPIKey = ""
+load_dotenv()
+
+geminiAPIKey = os.getenv("geminiAPIKey")
 
 gemini = genai.Client(
   api_key=geminiAPIKey
@@ -26,6 +30,7 @@ Create a newsletter entry from this article.
 
 Rules:
 - Only use information from the article
+- Don't use any vulgar language, and make sure entry-level devs can understand
 - Do not invent facts
 - Return ONLY valid JSON
 - No markdown
@@ -48,7 +53,9 @@ Article text:
 
 def create_newsletter_entry(title, url): # given a title and url, create a string entry for a newsletter
     text = extract_article_text(url)
-    return summarize_article(text, title)
+    entry = summarize_article(text, title)
+    entry["url"] = url
+    return entry
 
 def assemble_newsletter(entries):  # given several newsletter entries, generate a full newsletter with title and intro
     if not entries:
@@ -60,12 +67,12 @@ def assemble_newsletter(entries):  # given several newsletter entries, generate 
     )
 
     prompt = f"""You are formatting a technology newsletter from pre-written entries below.
-
 Rules:
 - Do not invent facts or add new information
 - Keep each entry's headline and summary content exactly as given
 - Write a short, catchy newsletter title (not generic, related to the entries)
 - Write a 2-3 sentence intro that previews what's in this issue
+- Please don't do too much
 - Return ONLY valid JSON, no markdown, no extra text
 
 Return this format:
