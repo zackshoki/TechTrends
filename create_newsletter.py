@@ -14,7 +14,7 @@ gemini = genai.Client(
 )
 
 
-def extract_article_text(url): # given a url, get the article's text as a string
+def extract_article_text(url): # given a url, get the article's text as a string using BeautifulSoup API
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers, timeout=10)
     soup = BeautifulSoup(response.text, "html.parser")

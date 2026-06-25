@@ -24,10 +24,13 @@ for i in range(3):
 newsletter = create_newsletter.assemble_newsletter(entries)
 print(newsletter["title"])
 print(newsletter["intro"])
+print()
 print(newsletter["entries"][0]["headline"])
 print(newsletter["entries"][0]["body"])
+print()
 print(newsletter["entries"][1]["headline"])
 print(newsletter["entries"][1]["body"])
+print()
 print(newsletter["entries"][2]["headline"])
 print(newsletter["entries"][2]["body"])
 
