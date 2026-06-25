@@ -3,7 +3,9 @@ import requests
 import database
 import users
 import sqlite3
+import create_newsletter
 import api_handlers
+
 
 
 
@@ -27,6 +29,7 @@ interests = input("Enter your interests (comma-separated): ")
 users.save_user_interest_database(id, interests)
 print(f"Hi {username}. Welcome to TechTrends newsletter")
 
+
 def menu():
     print("1. View latest tech trends")
     print("2. View your interests")
@@ -45,10 +48,23 @@ while True:
         while number_of_articles <= 0:
             number_of_articles = int(input("Please enter the number of articles greater than 0: "))
         # get the latest tech trends from HackerNews API limit amout to the user number
-        trends = api_handlers.Fetch_HackerNews_Top_Stories(limit=number_of_articles)
-        #  output title and url
-        for article in trends:
-            print(f"Title: {article.get('title')} \n URL: {article.get('url')} \n")
+        stories = api_handlers.Fetch_HackerNews_Top_Stories(limit=3)
+        entries = []
+        for i in range(3):
+            entries.append(create_newsletter.create_newsletter_entry(stories[i]["title"], stories[i]["url"]))
+
+        newsletter = create_newsletter.assemble_newsletter(entries)
+        print(newsletter["title"])
+        print(newsletter["intro"])
+        print()
+        print(newsletter["entries"][0]["headline"])
+        print(newsletter["entries"][0]["body"])
+        print()
+        print(newsletter["entries"][1]["headline"])
+        print(newsletter["entries"][1]["body"])
+        print()
+        print(newsletter["entries"][2]["headline"])
+        print(newsletter["entries"][2]["body"])
     elif choice == "2":
         # output user interests
         user_interests = users.get_user_interests(id)

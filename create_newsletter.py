@@ -14,7 +14,7 @@ gemini = genai.Client(
 )
 
 
-def extract_article_text(url): # given a url, get the article's text as a string
+def extract_article_text(url): # given a url, get the article's text as a string using BeautifulSoup API
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers, timeout=10)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -48,7 +48,7 @@ Article title:
 Article text:
 {article_text}"""
 
-    response = gemini.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+    response = gemini.models.generate_content(model="gemini-3.1-flash-lite", contents=prompt)
     return json.loads(response.text)
 
 def create_newsletter_entry(title, url): # given a title and url, create a string entry for a newsletter
@@ -87,7 +87,7 @@ Return this format:
 Entries:
 {sections}"""
 
-    response = gemini.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+    response = gemini.models.generate_content(model="gemini-3.1-flash-lite", contents=prompt)
     return json.loads(response.text)
 
 if __name__ == "__main__":
