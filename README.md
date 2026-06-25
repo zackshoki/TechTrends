@@ -35,7 +35,7 @@ It is a command-line interface, so everything is done in the terminal.
 
 ## Step-by-Step Flow
 
-1. Program starts;
+1. Program starts
 2. User enters a username; if it already exists, they are asked to choose another
 3. New users enter their interests, which are saved to the database
 4. Main menu is shown with the available choices
