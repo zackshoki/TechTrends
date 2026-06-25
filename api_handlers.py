@@ -52,71 +52,18 @@ if __name__ == "__main__":
         print("-" * 40)
         print()
 
-##############
+
+
+
+
+
+#######################
 
 
 
 
 
 
-def Fetch_GitHub_Trending_Repos(interest="python", limit=5):
-    """
-        Fetches the trending repositories from GitHub using the GitHub API.
-    """
-    trending_url = f"https://api.github.com/search/repositories?q=language:{interest}&sort=stars&order=desc&per_page={limit}"
-
-    params = {
-        "q": interest,        
-        "sort": "stars",      
-        "order": "desc",      
-        "per_page": limit
-    }
-
-    try:
-        response = requests.get(trending_url, params=params)
-        
-        if response.status_code != 200:
-            print(f"Failed to fetch GitHub repos: {response.status_code}")
-            return []
-            
-        raw_data = response.json()
-        
-        repo_list = raw_data.get("items", [])
-        
-        cleaned_projects = []
-        
-        for repo in repo_list:
-            project = {
-                "title": repo.get("name"),       
-                "url": repo.get("html_url"),     
-                "source": "GitHub"            
-            }
-            cleaned_projects.append(project)
-            
-        return cleaned_projects
-
-    except requests.exceptions.RequestException as e:
-        print(f"GitHub Network Error: {e}")
-        return []
-
- # TESTING
-if __name__ == "__main__":
-    print("Testing w/ different interests")
-    
-    # Test 1
-    ml_repos = Fetch_GitHub_Trending_Repos(interest="machine-learning", limit=3)
-    print("\n🤖 Machine Learning Repos:")
-    for repo in ml_repos:
-        print(f"- {repo['title']}: {repo['url']}")
-        
-    # Test 2
-    js_repos = Fetch_GitHub_Trending_Repos(interest="javascript", limit=2)
-    print("\n🌐 JavaScript Repos:")
-    for repo in js_repos:
-        print(f"- {repo['title']}: {repo['url']}")
-
-
-##############
 
 load_dotenv()
 
