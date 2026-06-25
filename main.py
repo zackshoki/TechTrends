@@ -48,23 +48,20 @@ while True:
         while number_of_articles <= 0:
             number_of_articles = int(input("Please enter the number of articles greater than 0: "))
         # get the latest tech trends from HackerNews API limit amout to the user number
-        stories = api_handlers.Fetch_HackerNews_Top_Stories(limit=3)
+        stories = api_handlers.Fetch_HackerNews_Top_Stories(limit=number_of_articles)
         entries = []
-        for i in range(3):
+        for i in range(number_of_articles):
             entries.append(create_newsletter.create_newsletter_entry(stories[i]["title"], stories[i]["url"]))
 
         newsletter = create_newsletter.assemble_newsletter(entries)
         print(newsletter["title"])
         print(newsletter["intro"])
         print()
-        print(newsletter["entries"][0]["headline"])
-        print(newsletter["entries"][0]["body"])
-        print()
-        print(newsletter["entries"][1]["headline"])
-        print(newsletter["entries"][1]["body"])
-        print()
-        print(newsletter["entries"][2]["headline"])
-        print(newsletter["entries"][2]["body"])
+        for i in range(number_of_articles):
+            print(newsletter["entries"][i]["headline"])
+            print(newsletter["entries"][i]["body"])
+            print()
+       
     elif choice == "2":
         # output user interests
         user_interests = users.get_user_interests(id)
