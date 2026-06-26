@@ -44,6 +44,12 @@ def menu():
     print("2. View your interests")
     print("3. Exit\n")
 
+def source_menu():
+    print("\n --- SOURCES ---")
+    print("1. HackerNews")
+    print("2. New York Times")
+
+
 
 while True:
     menu()
@@ -51,35 +57,45 @@ while True:
     # check if the choice is valid
     while choice not in ["1", "2", "3"]:
         choice = input("Invalid choice. Please enter 1, 2, or 3: ")
+    # IF USERS CHOICE 1 - FETCH ARTICLES
     if choice == "1":
         # import gemini
         import create_newsletter
-        #  user inputs a number of articles
-        number_of_articles = int(input("How many articles would you want (default is 3): "))
-        
-        # if invalid number of articles ask to enter valid
-        while number_of_articles <= 0:
-            number_of_articles = int(input("Invalid choice. Please enter the number of articles: ")) 
-        # get the latest tech trends from HackerNews API limit amout to the user number
-        stories = api_handlers.Fetch_HackerNews_Top_Stories(limit=number_of_articles)
-        entries = []
-        for i in range(number_of_articles):
-            entries.append(create_newsletter.create_newsletter_entry(stories[i]["title"], stories[i]["url"]))
-        newsletter = create_newsletter.assemble_newsletter(entries)
-        print()
-        for i in range(number_of_articles):
-            print(str(i+1) + ". " + newsletter["entries"][i]["headline"])
-            print(newsletter["entries"][i]["url"])
+            #  user inputs a number of articles
+        while True:
+            source_menu()
+            source_choice = input("Enter your choice: ")
+            while source_choice not in ["1", "2"]:
+                source_choice = input("Invalid choice. Please enter 1 or 2: ")
+            number_of_articles = int(input("How many articles would you want: "))
+            # if invalid number of articles ask to enter valid
+            while number_of_articles <= 0:
+                number_of_articles = int(input("Invalid choice. Please enter the number of articles: ")) 
+            # IF SOURCE CHOICE 1 - FETCH HACKERNEWS ARTICLES
+            if source_choice == "1":
+                # get the latest tech trends from HackerNews API limit amout to the user number
+                stories = api_handlers.Fetch_HackerNews_Top_Stories(limit=number_of_articles)
+            # OTHERWISE- FETCH NYT articles
+            elif source_choice == "2":
+                stories = api_handlers.Fetch_NYT_Top_Stories(interest="technology", limit=number_of_articles)
+            entries = []
+            for i in range(number_of_articles):
+                entries.append(create_newsletter.create_newsletter_entry(stories[i]["title"], stories[i]["url"]))
+            newsletter = create_newsletter.assemble_newsletter(entries)
             print()
-        choice2 = input("Summary? (Y/N): ")
-        while choice2 not in ["Y", "N", "y", "n"]:
-            choice2 = input("Invalid. Please enter Y or N: ")
-        if choice2 == "N" or choice2 == "n":
-            pass
-        elif choice2 == "Y" or choice2 == "y": 
-            choice3 = input("Choose which article (Enter a number): ")
+            for i in range(number_of_articles):
+                print(str(i+1) + ". " + newsletter["entries"][i]["headline"])
+                print(newsletter["entries"][i]["url"])
+                print()
+            choice3 = input("Choose an article to summarize (Enter a number): ")
             print()
             print("\n", newsletter["entries"][int(choice3)-1]["body"]) 
+            #  keep asking if they want more articles until they want to go back to the
+            if input("\nDo you want to go back to the main menu? (y/n): ").lower() == "y" :
+                break
+        
+        
+    
     elif choice == "2":
         # output user interests
         user_interests = users.get_user_interests(user_id)

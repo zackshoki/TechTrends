@@ -19,7 +19,7 @@ def Fetch_HackerNews_Top_Stories(limit=5):
     if response.status_code != 200:
         raise Exception(f"Failed to fetch top stories: {response.status_code}") # maybe try another convention here, print statement?
 
-    story_IDs = response.json()[:10]  # maybe make this a parameter to allow for more flexibility in the number of stories fetched
+    story_IDs = response.json()[:limit]  # maybe make this a parameter to allow for more flexibility in the number of stories fetched
     articles = []
 
 
