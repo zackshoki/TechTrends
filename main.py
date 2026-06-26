@@ -42,7 +42,8 @@ def menu():
     print("\n --- MENU ---")
     print("1. View latest tech trends")
     print("2. View your interests")
-    print("3. Exit\n")
+    print("3. Edit your interests")
+    print("4. Exit\n")
 
 def source_menu():
     print("\n --- SOURCES ---")
@@ -55,8 +56,8 @@ while True:
     menu()
     choice = input("Enter your choice: ")
     # check if the choice is valid
-    while choice not in ["1", "2", "3"]:
-        choice = input("Invalid choice. Please enter 1, 2, or 3: ")
+    while choice not in ["1", "2", "3", "4"]:
+        choice = input("Invalid choice. Please enter 1, 2, 3, or 4: ")
     # IF USERS CHOICE 1 - FETCH ARTICLES
     if choice == "1":
         # import gemini
@@ -93,17 +94,40 @@ while True:
             #  keep asking if they want more articles until they want to go back to the
             if input("\nDo you want to go back to the main menu? (y/n): ").lower() == "y" :
                 break
-        
-        
-    
+    # IF USERS CHOICE 2 - PRINT USER INTERESTS
     elif choice == "2":
         # output user interests
         user_interests = users.get_user_interests(user_id)
         print(f"\nYour interests are: {user_interests}\n")
-        # implement a function to add or remove interests
-        # print("If you want to add to your interest type 'add' or if you want to remove an interest type 'remove' or type 'back' to go back to the main menu")
+    # IF USERS CHOICE 3 - EDIT USER INTERESTS
     elif choice == "3":
+        user_interests = users.get_user_interests(user_id)
+        print(f"\nYour interests are: {user_interests}\n")
+        print(f"\n Type 'add' to add to your interests \n Type 'remove' to remove an interest \n Type 'back' to go back to the main menu\n")
+        choice_to_edit_interests = input("Enter your choice: ").lower()
+        while choice_to_edit_interests not in ["add", "remove", "back"]:
+            choice_to_edit_interests = input("Invalid choice. Please enter 'add', 'remove', or 'back': ").lower()
+        if choice_to_edit_interests == "add": 
+                new_interest = input("Enter the interest you want to add: ")
+                # get current interests and append new interest
+                current_interests = users.get_user_interests(user_id)
+                updated_interests = current_interests + ", " + new_interest
+                users.save_user_interest_database(user_id, updated_interests)
+                print(f"\nYour interests now are: {updated_interests}\n") 
+        elif choice_to_edit_interests == "remove":
+                current_interests = users.get_user_interests(user_id)
+                print(f"\nYour current interests are: {current_interests}\n")
+                interest_to_remove = input("Enter the interest you want to remove: ")
+                # remove interest from current interests
+                updated_interests = ", ".join([interest.strip() for interest in current_interests.split(",") if interest.strip().lower() != interest_to_remove.lower()])
+                if updated_interests == current_interests:
+                    print(f"\n{interest_to_remove} is not in your interests.\n") 
+                else:
+                    users.save_user_interest_database(user_id, updated_interests)
+                    print(f"\nYour interests now are: {updated_interests}\n")
+    elif choice == "4":
         break
+    
 
 
 
