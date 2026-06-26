@@ -45,10 +45,10 @@ def menu():
     print("3. Edit your interests")
     print("4. Exit\n")
 
-    def source_menu():
-        print("\n --- SOURCES ---")
-        print("1. HackerNews")
-        print("2. New York Times")
+def source_menu():
+    print("\n --- SOURCES ---")
+    print("1. HackerNews")
+    print("2. New York Times")
 
 
 
@@ -63,6 +63,7 @@ while True:
         # import gemini
         import create_newsletter
             #  user inputs a number of articles
+        # print("Searching...\n")
         while True:
             source_menu()
             source_choice = input("\nEnter your choice: ")
@@ -92,7 +93,10 @@ while True:
             print()
             print("\n", newsletter["entries"][int(choice3)-1]["body"]) 
             #  keep asking if they want more articles until they want to go back to the
-            if input("\nDo you want to go back to the main menu? (y/n): ").lower() == "y" :
+            ask_go_back_to_manu = input("\nDo you want to see more articles? (y/n): ").lower()
+            while ask_go_back_to_manu not in ["y", "n"]:
+                ask_go_back_to_manu = input("Invalid choice. Please enter 'y' or 'n': ").lower()
+            if ask_go_back_to_manu == "n":
                 break
     # IF USERS CHOICE 2 - PRINT USER INTERESTS
     elif choice == "2":
