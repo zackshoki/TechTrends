@@ -1,4 +1,4 @@
-import database
+
 import sqlite3
 
 def create_user(username):
@@ -53,9 +53,9 @@ def get_user_interests(user_id):
     # select user from database 
     cursor.execute("SELECT interests FROM users WHERE user_id = ?", (user_id,))
     # get interests and output them as values instead of tuple
-    interests = cursor.fetchone()[0]
+    interests = cursor.fetchone()
     connection.close()
-    return interests
+    return interests[0] if interests else None
 
 
 
