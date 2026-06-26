@@ -19,11 +19,13 @@ def Fetch_HackerNews_Top_Stories(limit=5):
     if response.status_code != 200:
         raise Exception(f"Failed to fetch top stories: {response.status_code}") # maybe try another convention here, print statement?
 
-    story_IDs = response.json()[:limit]  # maybe make this a parameter to allow for more flexibility in the number of stories fetched
+    story_IDs = response.json()  # maybe make this a parameter to allow for more flexibility in the number of stories fetched
     articles = []
 
 
     for story_ID in story_IDs:
+        if len(articles) == limit:
+            break
         story_url = f"https://hacker-news.firebaseio.com/v0/item/{story_ID}.json?print=pretty"
         story_response = requests.get(story_url)
 
@@ -32,10 +34,12 @@ def Fetch_HackerNews_Top_Stories(limit=5):
             continue
 
         story_data = story_response.json()
+        if not story_data.get("url"):
+            # If the story doesn't have a URL, we skip it
+            continue
         articles.append(story_data)
 
     return articles
-
 
     # TESTING 
 
@@ -107,10 +111,14 @@ def Fetch_NYT_Top_Stories(interest="technology", limit=5):
             for article in articles_list:
                 headline_dict = article.get("headline", {})
                 title = headline_dict.get("main", "No Title Available")
-                
+                # create variable url to check if link for the article exist
+                web_url = article.get("web_url")
+                if not web_url:
+                    # skip an article if no links
+                    continue
                 project_article = {
                     "title": title,
-                    "url": article.get("web_url"),
+                    "url": web_url,
                     "source": "New York Times"
                 }
                 cleaned_articles.append(project_article)

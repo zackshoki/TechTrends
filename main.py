@@ -64,7 +64,7 @@ while True:
             #  user inputs a number of articles
         while True:
             source_menu()
-            source_choice = input("Enter your choice: ")
+            source_choice = input("\nEnter your choice: ")
             while source_choice not in ["1", "2"]:
                 source_choice = input("Invalid choice. Please enter 1 or 2: ")
             number_of_articles = int(input("How many articles would you want: "))
